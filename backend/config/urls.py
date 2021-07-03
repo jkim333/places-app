@@ -25,3 +25,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_Root=settings.MEDIA_ROOT)
+    urlpatterns += [path('api-auth/', include('rest_framework.urls'))]
