@@ -3,9 +3,10 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect,
 } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { AppContext } from './shared/context/context';
 import Users from './user/pages/Users';
 import UserPlaces from './places/pages/UserPlaces';
@@ -13,6 +14,7 @@ import NewPlace from './places/pages/NewPlace';
 import UpdatePlace from './places/pages/UpdatePlace';
 import Login from './user/pages/Login';
 import Signup from './user/pages/Signup';
+import Navigation from './shared/components/Navigation';
 
 function App() {
   const { token } = useContext(AppContext);
@@ -58,8 +60,10 @@ function App() {
 
   return (
     <Router>
-      {/* <MainNavigation /> */}
-      <main>{routes}</main>
+      <Navigation />
+      <main>
+        <Container>{routes}</Container>
+      </main>
     </Router>
   );
 }
