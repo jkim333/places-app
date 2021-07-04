@@ -62,7 +62,7 @@ function App() {
     <Router>
       <Navigation />
       <main>
-        <Container>{routes}</Container>
+        <Container className='mt-5'>{routes}</Container>
       </main>
     </Router>
   );
