@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import UsersList from '../components/UsersList';
 
 const DUMMY_USERS = [
@@ -11,6 +12,10 @@ const DUMMY_USERS = [
 ];
 
 function Users() {
+  // const [users, setUsers] = useState()
+  // useEffect(() => {
+
+  // }, []);
   return (
     <React.Fragment>
       <UsersList users={DUMMY_USERS} />

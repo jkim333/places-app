@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { AppContext } from '../context/context';
 
 function Navigation() {
-  const { token, userId, logout } = useContext(AppContext);
+  const { accessToken, userId, logout } = useContext(AppContext);
 
   return (
     <Navbar bg='light' expand='lg'>
@@ -15,27 +15,27 @@ function Navigation() {
           <NavLink to='/' exact className='nav-link'>
             ALL USERS
           </NavLink>
-          {!!token && (
+          {!!accessToken && (
             <NavLink to={`/${userId}/places`} className='nav-link'>
               MY PLACES
             </NavLink>
           )}
-          {!!token && (
+          {!!accessToken && (
             <NavLink to='/places/new' className='nav-link'>
               ADD PLACE
             </NavLink>
           )}
-          {!token && (
+          {!accessToken && (
             <NavLink to='/login' className='nav-link'>
               LOGIN
             </NavLink>
           )}
-          {!token && (
+          {!accessToken && (
             <NavLink to='/signup' className='nav-link'>
               SIGNUP
             </NavLink>
           )}
-          {!!token && (
+          {!!accessToken && (
             <Button onClick={logout} variant='link'>
               LOGOUT
             </Button>

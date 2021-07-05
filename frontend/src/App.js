@@ -17,10 +17,10 @@ import Signup from './user/pages/Signup';
 import Navigation from './shared/components/Navigation';
 
 function App() {
-  const { token } = useContext(AppContext);
+  const { accessToken } = useContext(AppContext);
 
   let routes;
-  if (token) {
+  if (accessToken) {
     routes = (
       <Switch>
         <Route path='/' exact>
