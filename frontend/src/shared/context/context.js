@@ -8,25 +8,9 @@ function AppProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  const login = async () => {
-    try {
-      const response = await axios({
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        data: { username: 'jihyung', password: 'password' },
-        url: 'http://localhost:8000/auth/jwt/create/',
-      });
-      setAccessToken(response.data.access);
-      setRefreshToken(response.data.refresh);
-    } catch (err) {
-      console.log(err);
-      // if (err.response) {
-      //   console.log(err.response);
-      //   console.log(err.response.data.detail);
-      // } else {
-      //   console.log(err);
-      // }
-    }
+  const login = (accessToken, refreshToken) => {
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
   };
 
   const getNewAccessTokenUsingRefreshToken = async () => {
