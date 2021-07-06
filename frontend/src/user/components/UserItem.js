@@ -10,7 +10,7 @@ function UserItem({ user }) {
             <Image src='holder.js/171x180' roundedCircle className='mr-3' />
             <div>
               <Card.Title>{user.username}</Card.Title>
-              <Card.Text>{`${user.places} place${
+              <Card.Text>{`${user.places.length} place${
                 user.places !== 1 ? 's' : ''
               }`}</Card.Text>
             </div>
