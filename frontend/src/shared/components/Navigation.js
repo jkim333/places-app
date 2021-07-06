@@ -8,7 +8,9 @@ function Navigation() {
 
   return (
     <Navbar bg='light' expand='lg'>
-      <Navbar.Brand href='#home'>YourPlace</Navbar.Brand>
+      <NavLink to='/' exact className='nav-link navbar-brand'>
+        YourPlace
+      </NavLink>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse id='basic-navbar-nav'>
         <Nav className='ml-auto'>
