@@ -10,9 +10,9 @@ function ErrorModal({ error, setError }) {
       <Modal.Header closeButton>
         <Modal.Title>An Error Occurred!</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{error}</Modal.Body>
+      <Modal.Body dangerouslySetInnerHTML={{ __html: error }}></Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={handleClose}>
+        <Button variant='danger' onClick={handleClose}>
           Close
         </Button>
       </Modal.Footer>

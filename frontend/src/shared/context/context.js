@@ -37,6 +37,8 @@ function AppProvider({ children }) {
     <AppContext.Provider
       value={{
         accessToken,
+        refreshToken,
+        setAccessToken,
         userId,
         login,
         getNewAccessTokenUsingRefreshToken,
