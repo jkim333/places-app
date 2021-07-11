@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import environ
+from datetime import timedelta
 
 env = environ.Env()
 environ.Env.read_env()
@@ -159,6 +160,8 @@ REST_FRAMEWORK = {
 }
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=2),
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

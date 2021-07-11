@@ -7,10 +7,14 @@ function AppProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [alertMsg, setAlertMsg] = useState(null);
 
   const login = (accessToken, refreshToken) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    setAlertMsg(null);
   };
 
   const getNewAccessTokenUsingRefreshToken = async () => {
@@ -31,6 +35,8 @@ function AppProvider({ children }) {
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   };
 
   return (
@@ -43,6 +49,8 @@ function AppProvider({ children }) {
         login,
         getNewAccessTokenUsingRefreshToken,
         logout,
+        alertMsg,
+        setAlertMsg,
       }}
     >
       {children}

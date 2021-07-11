@@ -15,9 +15,10 @@ import UpdatePlace from './places/pages/UpdatePlace';
 import Login from './user/pages/Login';
 import Signup from './user/pages/Signup';
 import Navigation from './shared/components/Navigation';
+import AlertComponent from './shared/components/AlertComponent';
 
 function App() {
-  const { accessToken } = useContext(AppContext);
+  const { accessToken, alertMsg, setAlertMsg } = useContext(AppContext);
 
   let routes;
   if (accessToken) {
@@ -62,7 +63,18 @@ function App() {
     <Router>
       <Navigation />
       <main>
-        <Container className='mt-5'>{routes}</Container>
+        <Container className='mt-5'>
+          <>
+            {alertMsg && (
+              <AlertComponent
+                variant='danger'
+                onClose={() => setAlertMsg(null)}
+                msg={alertMsg}
+              />
+            )}
+            {routes}
+          </>
+        </Container>
       </main>
     </Router>
   );

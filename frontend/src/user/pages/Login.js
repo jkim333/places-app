@@ -24,7 +24,7 @@ function Login() {
           try {
             const response = await axios({
               method: 'POST',
-              headers: { 'content-type': 'application/json' },
+              headers: { 'Content-Type': 'application/json' },
               data: { email: values.email, password: values.password },
               url: 'http://localhost:8000/auth/jwt/create/',
             });

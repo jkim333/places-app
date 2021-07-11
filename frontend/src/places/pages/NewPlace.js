@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { Formik } from 'formik';
@@ -17,26 +17,53 @@ const schema = yup.object().shape({
 function NewPlace() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { accessToken, refreshToken, setAccessToken } = useContext(AppContext);
+  const { accessToken, refreshToken, setAccessToken, logout, setAlertMsg } =
+    useContext(AppContext);
+  const unmounted = useRef(false);
+
+  const source = useMemo(() => {
+    const CancelToken = axios.CancelToken;
+    return CancelToken.source();
+  }, []);
 
   // Function that will be called to refresh authorization
-  const refreshAuthLogic = (failedRequest) =>
-    axios
-      .post(
+  const refreshAuthLogic = async (failedRequest) => {
+    try {
+      const response = await axios.post(
         'http://127.0.0.1:8000/auth/jwt/refresh/',
-        { refresh: refreshToken },
-        { headers: { 'content-type': 'application/json' } }
-      )
-      .then((tokenRefreshResponse) => {
-        localStorage.setItem('accessToken', tokenRefreshResponse.data.access);
-        setAccessToken(tokenRefreshResponse.data.access);
-        failedRequest.response.config.headers['Authorization'] =
-          'Bearer ' + tokenRefreshResponse.data.access;
-        return Promise.resolve();
-      });
+        {
+          refresh: refreshToken,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cancelToken: source.token,
+        }
+      );
+      if (!unmounted.current) {
+        setAccessToken(response.data.access);
+      }
+      localStorage.setItem('accessToken', response.data.access);
+      failedRequest.response.config.headers['Authorization'] =
+        'Bearer ' + response.data.access;
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(new Error('refreshToken expired'));
+    }
+  };
 
   // Instantiate the interceptor (you can chain it as it returns the axios instance)
-  createAuthRefreshInterceptor(axios, refreshAuthLogic);
+  createAuthRefreshInterceptor(axios, refreshAuthLogic, {
+    pauseInstanceWhileRefreshing: true,
+  });
+
+  useEffect(() => {
+    return function cleanup() {
+      unmounted.current = true;
+      source.cancel('Operation canceled by the user.');
+    };
+  }, [source]);
 
   return (
     <React.Fragment>
@@ -46,11 +73,13 @@ function NewPlace() {
         validationSchema={schema}
         onSubmit={async (values) => {
           try {
-            setIsLoading(true);
+            if (!unmounted.current) {
+              setIsLoading(true);
+            }
             const response = await axios({
               method: 'POST',
               headers: {
-                'content-type': 'application/json',
+                'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + accessToken,
               },
               data: {
@@ -59,8 +88,11 @@ function NewPlace() {
                 address: values.address,
               },
               url: 'http://localhost:8000/api/places/',
+              cancelToken: source.token,
             });
-            setIsLoading(false);
+            if (!unmounted.current) {
+              setIsLoading(false);
+            }
           } catch (err) {
             console.log(err);
             if (err.response) {
@@ -76,22 +108,45 @@ function NewPlace() {
                     errorMessage += `${errors[i][0]} : ${errors[i][1]} <br/>`;
                   }
                 }
-                setError(errorMessage);
+                if (!unmounted.current) {
+                  setError(errorMessage);
+                }
               } else {
-                setError(
-                  'Something went wrong. Please try again another time.'
-                );
+                if (!unmounted.current) {
+                  setError(
+                    'Something went wrong. Please try again another time.'
+                  );
+                }
+              }
+              if (!unmounted.current) {
+                setIsLoading(false);
               }
             } else if (err.request) {
               // The request was made but no response was received
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
-              setError('Something went wrong. Please try again another time.');
+              if (!unmounted.current) {
+                setError(
+                  'Something went wrong. Please try again another time.'
+                );
+                setIsLoading(false);
+              }
+            } else if (err.message === 'refreshToken expired') {
+              if (!unmounted.current) {
+                setAlertMsg('Your Session expired. Please login again.');
+                setIsLoading(false);
+              }
+              source.cancel('Operation canceled by the user.');
+              logout();
             } else {
               // Something happened in setting up the request that triggered an Error
-              setError('Something went wrong. Please try again another time.');
+              if (!unmounted.current) {
+                setError(
+                  'Something went wrong. Please try again another time.'
+                );
+                setIsLoading(false);
+              }
             }
-            setIsLoading(false);
           }
         }}
         initialValues={{
