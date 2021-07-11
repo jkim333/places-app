@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Row, Col, Button, Card } from 'react-bootstrap';
 import { AppContext } from '../../shared/context/context';
 import ErrorModal from '../../shared/components/ErrorModal';
+import Loading from '../../shared/components/Loading';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email address').required('Required'),
@@ -13,41 +14,80 @@ const schema = yup.object().shape({
 
 function Login() {
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AppContext);
+  const unmounted = useRef(false);
+
+  const source = useMemo(() => {
+    const CancelToken = axios.CancelToken;
+    return CancelToken.source();
+  }, []);
+
+  useEffect(() => {
+    return function cleanup() {
+      unmounted.current = true;
+      source.cancel('Operation canceled by the user.');
+    };
+  }, [source]);
 
   return (
     <React.Fragment>
+      {isLoading && <Loading />}
       <ErrorModal error={error} setError={setError} />
       <Formik
         validationSchema={schema}
         onSubmit={async (values) => {
           try {
+            if (!unmounted.current) {
+              setIsLoading(true);
+            }
             const response = await axios({
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               data: { email: values.email, password: values.password },
               url: 'http://localhost:8000/auth/jwt/create/',
+              cancelToken: source.token,
             });
-            login(response.data.access, response.data.refresh);
+            if (!unmounted.current) {
+              setIsLoading(false);
+              login(response.data.access, response.data.refresh);
+            }
           } catch (err) {
             if (err.response) {
               // The request was made and the server responded with a status code
               // that falls out of the range of 2xx
               if (err.response.status < 500) {
-                setError('No active account found with the given credentials.');
+                if (!unmounted.current) {
+                  setError(
+                    'No active account found with the given credentials.'
+                  );
+                }
               } else {
-                setError(
-                  'Something went wrong. Please try again another time.'
-                );
+                if (!unmounted.current) {
+                  setError(
+                    'Something went wrong. Please try again another time.'
+                  );
+                }
               }
+              setIsLoading(false);
             } else if (err.request) {
               // The request was made but no response was received
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
-              setError('Something went wrong. Please try again another time.');
+              if (!unmounted.current) {
+                setError(
+                  'Something went wrong. Please try again another time.'
+                );
+                setIsLoading(false);
+              }
             } else {
               // Something happened in setting up the request that triggered an Error
-              setError('Something went wrong. Please try again another time.');
+              if (!unmounted.current) {
+                setError(
+                  'Something went wrong. Please try again another time.'
+                );
+                setIsLoading(false);
+              }
             }
           }
         }}
@@ -65,7 +105,7 @@ function Login() {
           isValid,
           errors,
         }) => (
-          <Row>
+          <Row className={isLoading && 'd-none'}>
             <Col lg={{ span: 6, offset: 3 }}>
               <Card>
                 <Card.Body>
