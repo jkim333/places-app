@@ -10,23 +10,36 @@ function Users() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let unmounted = false;
+    let source = axios.CancelToken.source();
     const fetchUsers = async () => {
-      setIsLoading(true);
+      if (!unmounted) {
+        setIsLoading(true);
+      }
       try {
         const response = await axios({
           method: 'GET',
           url: 'http://localhost:8000/api/users/',
+          cancelToken: source.token,
         });
-        setUsers(response.data);
-        setIsLoading(false);
-        setError(null);
+        if (!unmounted) {
+          setUsers(response.data);
+          setIsLoading(false);
+          setError(null);
+        }
       } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-        setError('Sorry, something went wrong! Please try this page again.');
+        if (!unmounted) {
+          setIsLoading(false);
+          setError('Sorry, something went wrong! Please try this page again.');
+        }
       }
     };
     fetchUsers();
+
+    return function cleanup() {
+      unmounted = true;
+      source.cancel('Operation canceled by the user.');
+    };
   }, []);
 
   if (isLoading) {
