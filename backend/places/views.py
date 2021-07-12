@@ -3,6 +3,7 @@ from django.forms.models import model_to_dict
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Place
 from .serializers import PlaceListSerializer, PlaceCreateSerializer, PlaceUpdateSerializer
 from .permissions import IsOwnerOrReadOnly
@@ -26,6 +27,7 @@ class PlaceCreate(generics.CreateAPIView):
     """
     serializer_class = PlaceCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def create(self, request, *args, **kwargs):
         """
@@ -35,7 +37,9 @@ class PlaceCreate(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        return Response(model_to_dict(instance), status=status.HTTP_201_CREATED, headers=headers)
+        output = model_to_dict(instance)
+        output.update({'image': request.build_absolute_uri(output['image'].url)})
+        return Response(output, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PlaceRetrieveUpdateDestroy(APIView):

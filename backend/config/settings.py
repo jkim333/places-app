@@ -160,8 +160,8 @@ REST_FRAMEWORK = {
 }
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=2),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(minutes=2),
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

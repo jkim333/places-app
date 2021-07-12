@@ -12,7 +12,7 @@ class PlaceCreateSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Place
-        fields = ['id', 'title', 'description', 'address']
+        fields = ['id', 'title', 'description', 'address', 'image']
     
     def create(self, validated_data):
         """
@@ -27,7 +27,6 @@ class PlaceCreateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
         except:
             raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
-        
         validated_data['creator'] = self.context['request'].user
         validated_data['lat'] = lat
         validated_data['lon'] = lon
