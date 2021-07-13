@@ -24,9 +24,9 @@ class PlaceCreateSerializer(serializers.ModelSerializer):
             lat = round(location.latitude * 10**6) / 10**6
             lon = round(location.longitude * 10**6) / 10**6
             if lat == None or lon == None:
-                raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
+                raise serializers.ValidationError({'address': ['We could not locate this address. Please try again with another address.']})
         except:
-            raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
+            raise serializers.ValidationError({'address': ['We could not locate this address. Please try again with another address.']})
         validated_data['creator'] = self.context['request'].user
         validated_data['lat'] = lat
         validated_data['lon'] = lon
@@ -74,9 +74,9 @@ class PlaceUpdateSerializer(serializers.ModelSerializer):
             lat = round(location.latitude * 10**6) / 10**6
             lon = round(location.longitude * 10**6) / 10**6
             if lat == None or lon == None:
-                raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
+                raise serializers.ValidationError({'address': ['We could not locate this address. Please try again with another address.']})
         except:
-            raise serializers.ValidationError({'address': 'We could not locate this address. Please try again with another address.'})
+            raise serializers.ValidationError({'address': ['We could not locate this address. Please try again with another address.']})
         instance.lat = lat
         instance.lon = lon
 

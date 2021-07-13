@@ -125,9 +125,9 @@ function NewPlace() {
                 let errorMessage = '';
                 for (let i = 0; i < errors.length; i++) {
                   if (i === errors.length - 1) {
-                    errorMessage += `'${errors[i][0]}' field : ${errors[i][1]}`;
+                    errorMessage += `'${errors[i][0]}' field : ${errors[i][1][0]}`;
                   } else {
-                    errorMessage += `${errors[i][0]} : ${errors[i][1]} <br/>`;
+                    errorMessage += `${errors[i][0]} : ${errors[i][1][0]} <br/>`;
                   }
                 }
                 if (!unmounted.current) {
@@ -155,7 +155,10 @@ function NewPlace() {
               }
             } else if (err.message === 'refreshToken expired') {
               if (!unmounted.current) {
-                setAlertMsg('Your Session expired. Please login again.');
+                setAlertMsg({
+                  message: 'Your Session expired. Please login again.',
+                  variant: 'danger',
+                });
                 setIsLoading(false);
               }
               source.cancel('Operation canceled by the user.');
@@ -287,7 +290,7 @@ function NewPlace() {
                             };
                             fileReader.readAsDataURL(file);
                           }}
-                          isInvalid={!!errors.file}
+                          isInvalid={!!errors.image}
                           ref={filePickerRef}
                         />
                         <Form.Control.Feedback

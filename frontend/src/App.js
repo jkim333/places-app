@@ -67,9 +67,9 @@ function App() {
           <>
             {alertMsg && (
               <AlertComponent
-                variant='danger'
+                variant={alertMsg.variant}
                 onClose={() => setAlertMsg(null)}
-                msg={alertMsg}
+                msg={alertMsg.message}
               />
             )}
             {routes}

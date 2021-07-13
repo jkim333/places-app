@@ -39,10 +39,12 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     image = models.ImageField()
+    username = None
+    username_validator = None
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['image']
 
     objects = CustomUserManager()
 
