@@ -4,7 +4,7 @@ import UserItem from './UserItem';
 function UsersList({ users }) {
   if (users && users.length > 0) {
     return (
-      <Row>
+      <Row className='mb-5'>
         {users.map((user) => (
           <UserItem user={user} key={user.id} />
         ))}
@@ -12,7 +12,7 @@ function UsersList({ users }) {
     );
   }
   return (
-    <Row>
+    <Row className='mb-5'>
       <Col className='text-center'>No users were found ...</Col>
     </Row>
   );

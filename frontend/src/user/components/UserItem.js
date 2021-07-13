@@ -7,9 +7,14 @@ function UserItem({ user }) {
       <Link to={`/${user.id}/places`}>
         <Card>
           <Card.Body className='d-flex flex-row align-items-center'>
-            <Image src='holder.js/171x180' roundedCircle className='mr-3' />
+            <Image
+              src={user.image ? `${user.image}` : '#'}
+              roundedCircle
+              className='mr-3'
+              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+            />
             <div>
-              <Card.Title>{user.username}</Card.Title>
+              <Card.Title>{user.email}</Card.Title>
               <Card.Text>{`${user.places.length} place${
                 user.places !== 1 ? 's' : ''
               }`}</Card.Text>

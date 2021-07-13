@@ -260,6 +260,7 @@ function NewPlace() {
                             width: '13rem',
                             height: '13rem',
                             display: 'block',
+                            objectFit: 'cover',
                           }}
                           thumbnail
                         />
