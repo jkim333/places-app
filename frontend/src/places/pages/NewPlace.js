@@ -3,33 +3,55 @@ import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Form, Row, Col, Button, Card } from 'react-bootstrap';
+import { Form, Row, Col, Button, Card, Image } from 'react-bootstrap';
 import { AppContext } from '../../shared/context/context';
 import ErrorModal from '../../shared/components/ErrorModal';
 import Loading from '../../shared/components/Loading';
+
+const imageFileExtensions = [
+  'image/jpg',
+  'image/jpeg',
+  'image/gif',
+  'image/png',
+];
 
 const schema = yup.object().shape({
   title: yup.string().max(100).required(),
   description: yup.string().max(500).required(),
   address: yup.string().max(100).required(),
+  image: yup
+    .mixed()
+    .required()
+    .test('fileType', 'upload a valid image file', (value) => {
+      if (value) {
+        return imageFileExtensions.includes(value.type);
+      }
+    }),
 });
 
 function NewPlace() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState();
   const { accessToken, refreshToken, setAccessToken, logout, setAlertMsg } =
     useContext(AppContext);
   const unmounted = useRef(false);
+
+  const filePickerRef = useRef();
+  const handlePickImage = () => {
+    filePickerRef.current.click();
+  };
 
   const source = useMemo(() => {
     const CancelToken = axios.CancelToken;
     return CancelToken.source();
   }, []);
+  const axiosInstance = axios.create();
 
   // Function that will be called to refresh authorization
   const refreshAuthLogic = async (failedRequest) => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         'http://127.0.0.1:8000/auth/jwt/refresh/',
         {
           refresh: refreshToken,
@@ -54,7 +76,7 @@ function NewPlace() {
   };
 
   // Instantiate the interceptor (you can chain it as it returns the axios instance)
-  createAuthRefreshInterceptor(axios, refreshAuthLogic, {
+  createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic, {
     pauseInstanceWhileRefreshing: true,
   });
 
@@ -76,17 +98,17 @@ function NewPlace() {
             if (!unmounted.current) {
               setIsLoading(true);
             }
-            const response = await axios({
+            const formData = new FormData();
+            formData.append('title', values.title);
+            formData.append('description', values.description);
+            formData.append('address', values.address);
+            formData.append('image', values.image);
+            const response = await axiosInstance({
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + accessToken,
               },
-              data: {
-                title: values.title,
-                description: values.description,
-                address: values.address,
-              },
+              data: formData,
               url: 'http://localhost:8000/api/places/',
               cancelToken: source.token,
             });
@@ -153,6 +175,7 @@ function NewPlace() {
           title: '',
           description: '',
           address: '',
+          image: null,
         }}
       >
         {({
@@ -163,8 +186,9 @@ function NewPlace() {
           touched,
           isValid,
           errors,
+          setFieldValue,
         }) => (
-          <Row className={isLoading && 'd-none'}>
+          <Row className={isLoading ? 'd-none' : 'mb-5'}>
             <Col>
               <Card>
                 <Card.Body>
@@ -220,6 +244,57 @@ function NewPlace() {
 
                         <Form.Control.Feedback type='invalid'>
                           {errors.address}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Row>
+
+                    <Row className='mb-3'>
+                      <Form.Group as={Col} className='position-relative mb-3'>
+                        <Form.Label>Image</Form.Label>
+                        <Image
+                          src={previewUrl}
+                          style={{
+                            width: '13rem',
+                            height: '13rem',
+                            display: 'block',
+                          }}
+                          thumbnail
+                        />
+                        <Button
+                          variant='info'
+                          className='mt-2'
+                          onClick={handlePickImage}
+                        >
+                          Pick Image
+                        </Button>
+                        <Form.Control
+                          className='d-none'
+                          type='file'
+                          name='image'
+                          onChange={(e) => {
+                            const file = e.currentTarget.files[0];
+                            setFieldValue('image', file);
+                            if (
+                              !file ||
+                              !imageFileExtensions.includes(file.type)
+                            ) {
+                              setPreviewUrl();
+                              return;
+                            }
+                            const fileReader = new FileReader();
+                            fileReader.onload = () => {
+                              setPreviewUrl(fileReader.result);
+                            };
+                            fileReader.readAsDataURL(file);
+                          }}
+                          isInvalid={!!errors.file}
+                          ref={filePickerRef}
+                        />
+                        <Form.Control.Feedback
+                          type='invalid'
+                          style={{ display: 'block' }}
+                        >
+                          {errors.image}
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Row>
