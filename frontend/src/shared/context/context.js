@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const AppContext = React.createContext();
 
@@ -9,32 +8,19 @@ function AppProvider({ children }) {
   const [userId, setUserId] = useState(null);
   const [alertMsg, setAlertMsg] = useState(null);
 
-  const login = (accessToken, refreshToken) => {
+  const login = (accessToken, refreshToken, userId) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
+    setUserId(userId);
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     setAlertMsg(null);
   };
 
-  const getNewAccessTokenUsingRefreshToken = async () => {
-    try {
-      const response = await axios({
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        data: { refresh: refreshToken },
-        url: 'http://localhost:8000/auth/jwt/refresh/',
-      });
-      setAccessToken(response.data.access);
-      setRefreshToken(response.data.refresh);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setUserId(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   };
@@ -47,7 +33,6 @@ function AppProvider({ children }) {
         setAccessToken,
         userId,
         login,
-        getNewAccessTokenUsingRefreshToken,
         logout,
         alertMsg,
         setAlertMsg,

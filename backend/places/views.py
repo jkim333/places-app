@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.forms.models import model_to_dict
+from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,17 +8,25 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Place
 from .serializers import PlaceListSerializer, PlaceCreateSerializer, PlaceUpdateSerializer
 from .permissions import IsOwnerOrReadOnly
+from .paginations import PlaceListPagination
 
+User = get_user_model()
 
 class PlaceList(generics.ListAPIView):
     """
     List all places for a given user.
     """
     serializer_class = PlaceListSerializer
+    pagination_class = PlaceListPagination
 
     def get_queryset(self):
         uid = self.kwargs.get('uid')
-        queryset = Place.objects.filter(creator=uid)
+        
+        try:
+            queryset = User.objects.get(id=uid).places.all()
+        except User.DoesNotExist:
+            raise Http404
+            
         return queryset
 
 

@@ -39,7 +39,7 @@ class PlaceListSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Place
-        fields = ['id', 'title', 'description', 'address', 'creator', 'lat', 'lon']
+        fields = ['id', 'title', 'description', 'image', 'address', 'creator', 'lat', 'lon']
 
 
 class PlaceUpdateSerializer(serializers.ModelSerializer):

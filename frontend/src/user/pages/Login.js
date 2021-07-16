@@ -48,9 +48,19 @@ function Login() {
               url: 'http://localhost:8000/auth/jwt/create/',
               cancelToken: source.token,
             });
+            const secondResponse = await axios({
+              method: 'GET',
+              headers: { Authorization: 'Bearer ' + response.data.access },
+              url: 'http://localhost:8000/auth/users/me/',
+              cancelToken: source.token,
+            });
             if (!unmounted.current) {
               setIsLoading(false);
-              login(response.data.access, response.data.refresh);
+              login(
+                response.data.access,
+                response.data.refresh,
+                secondResponse.data.id
+              );
             }
           } catch (err) {
             if (err.response) {
