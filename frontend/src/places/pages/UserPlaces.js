@@ -95,7 +95,11 @@ function UserPlaces() {
   return (
     <React.Fragment>
       <ErrorModal error={error} setError={setError} />
-      <PlaceList places={places} />
+      <PlaceList
+        places={places}
+        setError={setError}
+        setIsLoading={setIsLoading}
+      />
       <div className='my-5 d-flex justify-content-center'>
         {places.length < totalPlaces && (
           <Button

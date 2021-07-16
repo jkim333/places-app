@@ -103,7 +103,7 @@ function NewPlace() {
             formData.append('description', values.description);
             formData.append('address', values.address);
             formData.append('image', values.image);
-            const response = await axiosInstance({
+            await axiosInstance({
               method: 'POST',
               headers: {
                 Authorization: 'Bearer ' + accessToken,

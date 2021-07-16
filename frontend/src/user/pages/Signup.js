@@ -69,7 +69,7 @@ function Signup() {
             formData.append('email', values.email);
             formData.append('password', values.password);
             formData.append('image', values.image);
-            const response = await axios({
+            await axios({
               method: 'POST',
               data: formData,
               url: 'http://localhost:8000/auth/users/',
