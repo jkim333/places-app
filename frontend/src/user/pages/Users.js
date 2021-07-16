@@ -9,7 +9,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(null);
   const [totalUsers, setTotalUsers] = useState(null);
 
   let unmounted = useRef(false);
@@ -18,6 +18,19 @@ function Users() {
     const CancelToken = axios.CancelToken;
     return CancelToken.source();
   }, []);
+
+  useEffect(() => {
+    const data = sessionStorage.getItem('page');
+    if (data) {
+      setPage(JSON.parse(data));
+    } else {
+      setPage(1);
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem('page', JSON.stringify(page));
+  }, [page]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -43,8 +56,8 @@ function Users() {
         }
       }
     };
-    fetchUsers();
-  }, [page, source.token]);
+    if (page) fetchUsers();
+  }, [page, source, source.token]);
 
   useEffect(() => {
     return function cleanup() {
