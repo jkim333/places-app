@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import UsersList from '../components/UsersList';
 import Loading from '../../shared/components/Loading';
 import ErrorModal from '../../shared/components/ErrorModal';
@@ -14,23 +15,30 @@ function Users() {
 
   let unmounted = useRef(false);
 
+  let history = useHistory();
+
   const source = useMemo(() => {
     const CancelToken = axios.CancelToken;
     return CancelToken.source();
   }, []);
 
   useEffect(() => {
-    const data = sessionStorage.getItem('page');
-    if (data) {
-      setPage(JSON.parse(data));
-    } else {
-      setPage(1);
-    }
-  }, []);
+    const setPageFromUrlSearchParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      const data = params.get('page');
 
-  useEffect(() => {
-    sessionStorage.setItem('page', JSON.stringify(page));
-  }, [page]);
+      if (data) {
+        setPage(Number(data));
+      } else {
+        setPage(1);
+      }
+    };
+    setPageFromUrlSearchParams();
+    window.addEventListener('popstate', setPageFromUrlSearchParams);
+    return function cleanup() {
+      window.removeEventListener('popstate', setPageFromUrlSearchParams);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -68,18 +76,26 @@ function Users() {
 
   const handleClickFirst = (e) => {
     setPage(1);
+    history.push({ pathname: '/', search: '?page=1' });
   };
 
   const handleClickPrev = (e) => {
-    setPage((prevPage) => prevPage - 1);
+    setPage((prevPage) => {
+      history.push({ pathname: '/', search: `?page=${prevPage - 1}` });
+      return prevPage - 1;
+    });
   };
 
   const handleClickNext = (e) => {
-    setPage((prevPage) => prevPage + 1);
+    setPage((prevPage) => {
+      history.push({ pathname: '/', search: `?page=${prevPage + 1}` });
+      return prevPage + 1;
+    });
   };
 
   const handleClickLast = (e) => {
     setPage(totalPages);
+    history.push({ pathname: '/', search: `?page=${totalPages}` });
   };
 
   let pages = [];

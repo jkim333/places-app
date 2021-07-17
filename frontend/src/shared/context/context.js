@@ -9,7 +9,6 @@ function AppProvider({ children }) {
   const [alertMsg, setAlertMsg] = useState(null);
 
   useEffect(() => {
-    console.log('useEffect');
     const access = sessionStorage.getItem('accessToken');
     const refresh = sessionStorage.getItem('refreshToken');
     const uid = sessionStorage.getItem('userId');
