@@ -75,7 +75,9 @@ class PlaceRetrieveUpdateDestroy(APIView):
         serializer = PlaceUpdateSerializer(place, data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
-            return Response(model_to_dict(instance))
+            output = model_to_dict(instance)
+            output.update({'image': request.build_absolute_uri(output['image'].url)})
+            return Response(output)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk, format=None):
