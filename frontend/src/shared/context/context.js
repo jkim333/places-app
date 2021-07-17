@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AppContext = React.createContext();
 
@@ -8,12 +8,25 @@ function AppProvider({ children }) {
   const [userId, setUserId] = useState(null);
   const [alertMsg, setAlertMsg] = useState(null);
 
+  useEffect(() => {
+    console.log('useEffect');
+    const access = sessionStorage.getItem('accessToken');
+    const refresh = sessionStorage.getItem('refreshToken');
+    const uid = sessionStorage.getItem('userId');
+    if (access && refresh && uid) {
+      setAccessToken(JSON.parse(access));
+      setRefreshToken(JSON.parse(refresh));
+      setUserId(JSON.parse(uid));
+    }
+  }, []);
+
   const login = (accessToken, refreshToken, userId) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserId(userId);
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    sessionStorage.setItem('accessToken', JSON.stringify(accessToken));
+    sessionStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+    sessionStorage.setItem('userId', JSON.stringify(userId));
     setAlertMsg(null);
   };
 
@@ -21,8 +34,9 @@ function AppProvider({ children }) {
     setAccessToken(null);
     setRefreshToken(null);
     setUserId(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('userId');
   };
 
   return (
