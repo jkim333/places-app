@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AppContext = React.createContext();
 
 function AppProvider({ children }) {
-  const [accessToken, setAccessToken] = useState(null);
+  const [accessToken, setAccessToken] = useState('initialAccessToken');
   const [refreshToken, setRefreshToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [alertMsg, setAlertMsg] = useState(null);
@@ -16,6 +16,10 @@ function AppProvider({ children }) {
       setAccessToken(JSON.parse(access));
       setRefreshToken(JSON.parse(refresh));
       setUserId(JSON.parse(uid));
+    } else {
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUserId(null);
     }
   }, []);
 

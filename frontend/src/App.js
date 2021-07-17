@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,47 +17,77 @@ import Signup from './user/pages/Signup';
 import Navigation from './shared/components/Navigation';
 import AlertComponent from './shared/components/AlertComponent';
 
+const initialRoutes = (
+  <Switch>
+    <Route path='/' exact>
+      <Users />
+    </Route>
+    <Route path='/:userId/places' exact>
+      <UserPlaces />
+    </Route>
+    <Route path='/places/new' exact>
+      <NewPlace />
+    </Route>
+    <Route path='/places/:placeId' exact>
+      <UpdatePlace />
+    </Route>
+    <Route path='/:userId/places' exact>
+      <UserPlaces />
+    </Route>
+    <Route path='/login' exact>
+      <Login />
+    </Route>
+    <Route path='/signup' exact>
+      <Signup />
+    </Route>
+    <Redirect to='/' />
+  </Switch>
+);
+
 function App() {
   const { accessToken, alertMsg, setAlertMsg } = useContext(AppContext);
+  const [routes, setRoutes] = useState(initialRoutes);
 
-  let routes;
-  if (accessToken) {
-    routes = (
-      <Switch>
-        <Route path='/' exact>
-          <Users />
-        </Route>
-        <Route path='/:userId/places' exact>
-          <UserPlaces />
-        </Route>
-        <Route path='/places/new' exact>
-          <NewPlace />
-        </Route>
-        <Route path='/places/:placeId' exact>
-          <UpdatePlace />
-        </Route>
-        <Redirect to='/' />
-      </Switch>
-    );
-  } else {
-    routes = (
-      <Switch>
-        <Route path='/' exact>
-          <Users />
-        </Route>
-        <Route path='/:userId/places' exact>
-          <UserPlaces />
-        </Route>
-        <Route path='/login' exact>
-          <Login />
-        </Route>
-        <Route path='/signup' exact>
-          <Signup />
-        </Route>
-        <Redirect to='/login' />
-      </Switch>
-    );
-  }
+  useEffect(() => {
+    if (accessToken && accessToken === 'initialAccessToken') {
+    } else if (accessToken && accessToken !== 'initialAccessToken') {
+      setRoutes(
+        <Switch>
+          <Route path='/' exact>
+            <Users />
+          </Route>
+          <Route path='/:userId/places' exact>
+            <UserPlaces />
+          </Route>
+          <Route path='/places/new' exact>
+            <NewPlace />
+          </Route>
+          <Route path='/places/:placeId' exact>
+            <UpdatePlace />
+          </Route>
+          <Redirect to='/' />
+        </Switch>
+      );
+    } else {
+      setRoutes(
+        <Switch>
+          <Route path='/' exact>
+            <Users />
+          </Route>
+          <Route path='/:userId/places' exact>
+            <UserPlaces />
+          </Route>
+          <Route path='/login' exact>
+            <Login />
+          </Route>
+          <Route path='/signup' exact>
+            <Signup />
+          </Route>
+          <Redirect to='/login' />
+        </Switch>
+      );
+    }
+  }, [accessToken]);
 
   return (
     <Router>
