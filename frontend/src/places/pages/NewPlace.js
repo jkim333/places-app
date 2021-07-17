@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Row, Col, Button, Card, Image } from 'react-bootstrap';
@@ -33,8 +34,17 @@ function NewPlace() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState();
-  const { accessToken, refreshToken, setAccessToken, logout, setAlertMsg } =
-    useContext(AppContext);
+  const {
+    accessToken,
+    refreshToken,
+    setAccessToken,
+    logout,
+    setAlertMsg,
+    userId,
+  } = useContext(AppContext);
+
+  let history = useHistory();
+
   const unmounted = useRef(false);
 
   const filePickerRef = useRef();
@@ -117,6 +127,11 @@ function NewPlace() {
             });
             if (!unmounted.current) {
               setIsLoading(false);
+              history.push(`/${userId}/places`);
+              setAlertMsg({
+                message: 'Your place was created successfully.',
+                variant: 'success',
+              });
             }
           } catch (err) {
             console.log(err);

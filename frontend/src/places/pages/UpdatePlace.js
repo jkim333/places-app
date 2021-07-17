@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Row, Col, Button, Card } from 'react-bootstrap';
@@ -27,6 +28,8 @@ function UpdatePlace() {
     refreshToken,
     setAccessToken,
   } = useContext(AppContext);
+
+  let history = useHistory();
 
   let unmounted = useRef(false);
 
@@ -124,7 +127,7 @@ function UpdatePlace() {
     if (userId) {
       fetchPlace(placeId);
     }
-  }, [placeId, userId, source.token]);
+  }, [placeId, userId, source.token, logout, setAlertMsg]);
 
   useEffect(() => {
     return function cleanup() {
@@ -160,6 +163,11 @@ function UpdatePlace() {
               });
               if (!unmounted.current) {
                 setIsLoading(false);
+                history.push(`/${userId}/places`);
+                setAlertMsg({
+                  message: 'Your place was updated successfully.',
+                  variant: 'success',
+                });
               }
             } catch (err) {
               console.log(err);
@@ -221,8 +229,8 @@ function UpdatePlace() {
             }
           }}
           initialValues={{
-            description: '',
-            address: '',
+            description: place.description,
+            address: place.address,
           }}
         >
           {({
