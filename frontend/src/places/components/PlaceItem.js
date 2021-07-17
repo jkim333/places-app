@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { AppContext } from '../../shared/context/context';
 
 function PlaceItem({ place, handleOpenMapModal, handleOpenDeleteModal }) {
+  const { userId } = useContext(AppContext);
+
   return (
     <Col className='my-3 d-flex justify-content-center'>
       <Card style={{ maxWidth: '800px', width: '100%' }}>
@@ -30,20 +33,24 @@ function PlaceItem({ place, handleOpenMapModal, handleOpenDeleteModal }) {
             >
               View On Map
             </Button>
-            <Link
-              to={`/places/${place.id}`}
-              className='btn btn-outline-secondary mr-2'
-              role='button'
-            >
-              Edit
-            </Link>
-            <Button
-              variant='outline-danger'
-              className='mr-2'
-              onClick={() => handleOpenDeleteModal(place.title, place.id)}
-            >
-              Delete
-            </Button>
+            {userId === place.creator && (
+              <React.Fragment>
+                <Link
+                  to={`/places/${place.id}`}
+                  className='btn btn-outline-secondary mr-2'
+                  role='button'
+                >
+                  Edit
+                </Link>
+                <Button
+                  variant='outline-danger'
+                  className='mr-2'
+                  onClick={() => handleOpenDeleteModal(place.title, place.id)}
+                >
+                  Delete
+                </Button>
+              </React.Fragment>
+            )}
           </div>
         </Card.Body>
       </Card>

@@ -65,11 +65,11 @@ function NewPlace() {
       );
       if (!unmounted.current) {
         setAccessToken(response.data.access);
+        sessionStorage.setItem(
+          'accessToken',
+          JSON.stringify(response.data.access)
+        );
       }
-      sessionStorage.setItem(
-        'accessToken',
-        JSON.stringify(response.data.access)
-      );
       failedRequest.response.config.headers['Authorization'] =
         'Bearer ' + response.data.access;
       return Promise.resolve();
