@@ -4,7 +4,7 @@ import PlaceItem from './PlaceItem';
 import DeleteModal from './DeleteModal';
 import MapModal from './MapModal';
 
-function PlaceList({ places, setError, setIsLoading }) {
+function PlaceList({ places, setError, setIsLoading, fetchPlaces, setPlaces }) {
   const [showMapModal, setShowMapModal] = useState({
     show: false,
     title: null,
@@ -55,6 +55,8 @@ function PlaceList({ places, setError, setIsLoading }) {
             handleCloseDeleteModal={handleCloseDeleteModal}
             setError={setError}
             setIsLoading={setIsLoading}
+            fetchPlaces={fetchPlaces}
+            setPlaces={setPlaces}
           />
         )}
         {places.map((place) => (

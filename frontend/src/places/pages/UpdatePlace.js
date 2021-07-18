@@ -56,7 +56,7 @@ function UpdatePlace() {
       );
       if (!unmounted.current) {
         setAccessToken(response.data.access);
-        sessionStorage.setItem(
+        localStorage.setItem(
           'accessToken',
           JSON.stringify(response.data.access)
         );

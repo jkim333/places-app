@@ -99,6 +99,8 @@ function UserPlaces() {
         places={places}
         setError={setError}
         setIsLoading={setIsLoading}
+        fetchPlaces={fetchPlaces}
+        setPlaces={setPlaces}
       />
       <div className='my-5 d-flex justify-content-center'>
         {places.length < totalPlaces && (

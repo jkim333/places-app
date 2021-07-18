@@ -9,9 +9,9 @@ function AppProvider({ children }) {
   const [alertMsg, setAlertMsg] = useState(null);
 
   useEffect(() => {
-    const access = sessionStorage.getItem('accessToken');
-    const refresh = sessionStorage.getItem('refreshToken');
-    const uid = sessionStorage.getItem('userId');
+    const access = localStorage.getItem('accessToken');
+    const refresh = localStorage.getItem('refreshToken');
+    const uid = localStorage.getItem('userId');
     if (access && refresh && uid) {
       setAccessToken(JSON.parse(access));
       setRefreshToken(JSON.parse(refresh));
@@ -27,9 +27,9 @@ function AppProvider({ children }) {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     setUserId(userId);
-    sessionStorage.setItem('accessToken', JSON.stringify(accessToken));
-    sessionStorage.setItem('refreshToken', JSON.stringify(refreshToken));
-    sessionStorage.setItem('userId', JSON.stringify(userId));
+    localStorage.setItem('accessToken', JSON.stringify(accessToken));
+    localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+    localStorage.setItem('userId', JSON.stringify(userId));
     setAlertMsg(null);
   };
 
@@ -37,9 +37,9 @@ function AppProvider({ children }) {
     setAccessToken(null);
     setRefreshToken(null);
     setUserId(null);
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.removeItem('userId');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
   };
 
   return (
