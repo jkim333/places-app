@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,14 +8,22 @@ import {
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AppContext } from './shared/context/context';
-import Users from './user/pages/Users';
-import UserPlaces from './places/pages/UserPlaces';
-import NewPlace from './places/pages/NewPlace';
-import UpdatePlace from './places/pages/UpdatePlace';
-import Login from './user/pages/Login';
-import Signup from './user/pages/Signup';
+// import Users from './user/pages/Users';
+// import UserPlaces from './places/pages/UserPlaces';
+// import NewPlace from './places/pages/NewPlace';
+// import UpdatePlace from './places/pages/UpdatePlace';
+// import Login from './user/pages/Login';
+// import Signup from './user/pages/Signup';
 import Navigation from './shared/components/Navigation';
 import AlertComponent from './shared/components/AlertComponent';
+import Loading from './shared/components/Loading';
+
+const Users = React.lazy(() => import('./user/pages/Users'));
+const UserPlaces = React.lazy(() => import('./places/pages/UserPlaces'));
+const NewPlace = React.lazy(() => import('./places/pages/NewPlace'));
+const UpdatePlace = React.lazy(() => import('./places/pages/UpdatePlace'));
+const Login = React.lazy(() => import('./user/pages/Login'));
+const Signup = React.lazy(() => import('./user/pages/Signup'));
 
 const initialRoutes = (
   <Switch>
@@ -94,7 +102,7 @@ function App() {
       <Navigation />
       <main>
         <Container className='mt-5'>
-          <>
+          <React.Fragment>
             {alertMsg && (
               <AlertComponent
                 variant={alertMsg.variant}
@@ -102,8 +110,8 @@ function App() {
                 msg={alertMsg.message}
               />
             )}
-            {routes}
-          </>
+            <Suspense fallback={<Loading />}>{routes}</Suspense>
+          </React.Fragment>
         </Container>
       </main>
     </Router>
