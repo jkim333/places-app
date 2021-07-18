@@ -72,7 +72,7 @@ function Signup() {
             await axios({
               method: 'POST',
               data: formData,
-              url: 'http://localhost:8000/auth/users/',
+              url: `${process.env.REACT_APP_BACKEND_URL}/auth/users/`,
               cancelToken: source.token,
             });
             if (!unmounted.current) {

@@ -35,7 +35,7 @@ function UserPlaces() {
       try {
         const response = await axios({
           method: 'GET',
-          url: `http://127.0.0.1:8000/api/places/user/${userId}/?page=${page}`,
+          url: `${process.env.REACT_APP_BACKEND_URL}/api/places/user/${userId}/?page=${page}`,
           cancelToken: source.token,
         });
         if (!unmounted.current) {

@@ -48,7 +48,7 @@ function Users() {
       try {
         const response = await axios({
           method: 'GET',
-          url: `http://localhost:8000/api/users/?page=${page}`,
+          url: `${process.env.REACT_APP_BACKEND_URL}/api/users/?page=${page}`,
           cancelToken: source.token,
         });
         if (!unmounted.current) {

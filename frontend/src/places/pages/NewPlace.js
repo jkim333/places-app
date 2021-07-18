@@ -62,7 +62,7 @@ function NewPlace() {
   const refreshAuthLogic = async (failedRequest) => {
     try {
       const response = await axiosInstance.post(
-        'http://127.0.0.1:8000/auth/jwt/refresh/',
+        `${process.env.REACT_APP_BACKEND_URL}/auth/jwt/refresh/`,
         {
           refresh: refreshToken,
         },
@@ -122,7 +122,7 @@ function NewPlace() {
                 Authorization: 'Bearer ' + accessToken,
               },
               data: formData,
-              url: 'http://localhost:8000/api/places/',
+              url: `${process.env.REACT_APP_BACKEND_URL}/api/places/`,
               cancelToken: source.token,
             });
             if (!unmounted.current) {

@@ -22,7 +22,7 @@ function DeleteModal({
   const refreshAuthLogic = async (failedRequest) => {
     try {
       const response = await axiosInstance.post(
-        'http://127.0.0.1:8000/auth/jwt/refresh/',
+        `${process.env.REACT_APP_BACKEND_URL}/auth/jwt/refresh/`,
         {
           refresh: refreshToken,
         },
@@ -58,7 +58,7 @@ function DeleteModal({
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
-        url: `http://localhost:8000/api/places/${id}`,
+        url: `${process.env.REACT_APP_BACKEND_URL}/api/places/${id}`,
       });
       fetchPlaces(1);
       setIsLoading(false);

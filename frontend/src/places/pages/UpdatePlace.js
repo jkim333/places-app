@@ -43,7 +43,7 @@ function UpdatePlace() {
   const refreshAuthLogic = async (failedRequest) => {
     try {
       const response = await axiosInstance.post(
-        'http://127.0.0.1:8000/auth/jwt/refresh/',
+        `${process.env.REACT_APP_BACKEND_URL}/auth/jwt/refresh/`,
         {
           refresh: refreshToken,
         },
@@ -82,7 +82,7 @@ function UpdatePlace() {
         }
         const response = await axios({
           method: 'GET',
-          url: `http://127.0.0.1:8000/api/places/${placeId}/`,
+          url: `${process.env.REACT_APP_BACKEND_URL}/api/places/${placeId}/`,
           cancelToken: source.token,
         });
         if (!unmounted.current) {
@@ -158,7 +158,7 @@ function UpdatePlace() {
                   description: values.description,
                   address: values.address,
                 },
-                url: `http://127.0.0.1:8000/api/places/${placeId}/`,
+                url: `${process.env.REACT_APP_BACKEND_URL}/api/places/${placeId}/`,
                 cancelToken: source.token,
               });
               if (!unmounted.current) {
