@@ -1,3 +1,6 @@
+# staticfiles folder
+/staticfiles
+
 # media folder
 /media
 
