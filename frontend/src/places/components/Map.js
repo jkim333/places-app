@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
+
+mapboxgl.workerClass = MapboxWorker; // Wire up loaded worker to be used instead of the default
 
 function Map({ lat, lon }) {
   const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
